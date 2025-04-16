@@ -3,8 +3,10 @@ let activePlayer = 'player1';
 let player1Time = 0;
 let player2Time = 0;
 let timerInterval = null;
+let increment = 0;
 
 const timeInput = document.getElementById('time-input');
+const incrementInput = document.getElementById('increment-input');
 const startButton = document.getElementById('start-game');
 const resetButton = document.getElementById('reset');
 const player1Timer = document.getElementById('player1');
@@ -27,6 +29,13 @@ function updateDisplay(player, time) {
 function switchPlayer() {
     if (!gameStarted) return;
     
+    // Add increment to the current player's time
+    if (activePlayer === 'player1') {
+        player1Time += increment;
+    } else {
+        player2Time += increment;
+    }
+    
     activePlayer = activePlayer === 'player1' ? 'player2' : 'player1';
     
     player1Timer.classList.toggle('active');
@@ -34,12 +43,17 @@ function switchPlayer() {
     
     document.querySelector('#player1 .player-status').textContent = activePlayer === 'player1' ? 'Active' : 'Waiting';
     document.querySelector('#player2 .player-status').textContent = activePlayer === 'player2' ? 'Active' : 'Waiting';
+    
+    // Update display after adding increment
+    updateDisplay('player1', player1Time);
+    updateDisplay('player2', player2Time);
 }
 
 function startGame() {
     if (gameStarted) return;
     
     const initialTime = parseInt(timeInput.value) * 60;
+    increment = parseInt(incrementInput.value);
     player1Time = initialTime;
     player2Time = initialTime;
     
@@ -49,6 +63,7 @@ function startGame() {
     gameStarted = true;
     startButton.disabled = true;
     timeInput.disabled = true;
+    incrementInput.disabled = true;
     
     timerInterval = setInterval(() => {
         if (activePlayer === 'player1') {
@@ -89,6 +104,7 @@ function resetGame() {
     
     startButton.disabled = false;
     timeInput.disabled = false;
+    incrementInput.disabled = false;
     
     const initialTime = parseInt(timeInput.value) * 60;
     updateDisplay('player1', initialTime);
